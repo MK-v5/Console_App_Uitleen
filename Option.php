@@ -22,9 +22,8 @@ class Option
         return $this->command;
     }
 
-    public function execute() {
-
-            call_user_func($this->command);
-        
+    public function execute() 
+    {
+        call_user_func($this->command);   
     }
 }

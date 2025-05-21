@@ -2,23 +2,62 @@
 
     require_once __DIR__ . "/Option.php";
     require_once __DIR__ . "/docent.php";
+    require_once __DIR__ . "/database/db.inc.php"; 
 
     $options = [];
 
-    function stop(){
+    $options[] = new Option("Exit", 'stop');
+    $options[] = new Option("Docent", 'login');
+    $options[] = new Option("Lijst", 'showList');
+
+    $sql_lijst_student = <<<sql
+        SELECT
+        p.Product_naam as naam,
+        c.Categorie_naam as categorie,
+        l.inlever_datum,
+        l.beschikbaarheid
+
+        FROM
+            `leenlijst` AS l
+        INNER JOIN `product` AS p
+        ON
+            p.id = l.product_id
+        INNER JOIN `categorie` AS c
+        ON
+            p.catergorie_id = c.id;
+        IF l.beschikbaarheid = '0'
+    sql;
+
+    $sql_lijst_result = $conn->query($sql_lijst_student);
+
+    function stop()
+    {
         exit;
     }
 
-    $options[] = new Option("Exit", 'stop');
-    $options[] = new Option("Docent", "docent");
-    // $options[] = new Option("Lijst", "Naar Lijst");
+    function showList()
+    {
+        global $sql_lijst_result;
+        $rows = $sql_lijst_result->fetchAll(PDO::FETCH_ASSOC);
 
- 
+        echo PHP_EOL;
+        echo "Producten:" . PHP_EOL;
+        echo PHP_EOL;
+        foreach ($rows as $item)
+        {
+            echo "  Naam: " . $item['naam'] . PHP_EOL;
+            echo "  Beschikbaarheid: " . $item['beschikbaarheid'] . PHP_EOL;
+            echo "  Inlever Datum: " . $item ['inlever_datum'] . PHP_EOL;
+            echo PHP_EOL;
+        }
+    }
+
+
     function askInput(array $options)
     {
-
         echo "Please input an option\n";
-        foreach ($options as $key => $option){
+        foreach ($options as $key => $option)
+        {
             // EOL is End Of Line
             echo "[" . $key + 1 . "] " . $option->getName() . PHP_EOL;
         }
