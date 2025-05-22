@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS `leenlijst` (
 	`inlever_datum` date,
 	`beschikbaarheid` int NOT NULL,
 	`product_id` int NOT NULL,
+	`student_id` int(),
 	PRIMARY KEY (`id`)
 );
 
@@ -52,6 +53,8 @@ ALTER TABLE `product` ADD CONSTRAINT `product_fk2` FOREIGN KEY (`catergorie_id`)
 ALTER TABLE `leenlijst` ADD CONSTRAINT `leenlijst_fk2` FOREIGN KEY (`beschikbaarheid`) REFERENCES `status`(`id`);
 
 ALTER TABLE `leenlijst` ADD CONSTRAINT `leenlijst_fk3` FOREIGN KEY (`product_id`) REFERENCES `product`(`id`);
+
+ALTER TABLE `leenlijst` ADD CONSTRAINT `leenlijst_fk4` FOREIGN KEY (`student_id`) REFERENCES `student`(`id`);
 
 
 ALTER TABLE `schade` ADD CONSTRAINT `schade_fk2` FOREIGN KEY (`docent_id`) REFERENCES `user`(`id`);

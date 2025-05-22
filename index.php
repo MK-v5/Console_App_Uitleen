@@ -7,7 +7,7 @@
     $options = [];
 
     $options[] = new Option("Exit", 'stop');
-    $options[] = new Option("Docent", 'login');
+    $options[] = new Option("Inloggen als docent", 'showList_doc');
     $options[] = new Option("Lijst", 'showList');
 
     $sql_lijst_student = <<<sql
