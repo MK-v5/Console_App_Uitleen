@@ -11,21 +11,22 @@
     $options[] = new Option("Lijst", 'showList');
 
     $sql_lijst_student = <<<sql
-        SELECT
-        p.Product_naam as naam,
-        c.Categorie_naam as categorie,
+    SELECT
+        p.Product_naam AS naam,
+        c.Categorie_naam AS categorie,
         l.inlever_datum,
-        l.beschikbaarheid
-
-        FROM
-            `leenlijst` AS l
-        INNER JOIN `product` AS p
-        ON
-            p.id = l.product_id
-        INNER JOIN `categorie` AS c
-        ON
-            p.catergorie_id = c.id;
-        IF l.beschikbaarheid = '0'
+        s.status_naam AS beschikbaarheid
+    FROM
+        `leenlijst` AS l
+    INNER JOIN `product` AS p
+    ON
+        p.id = l.product_id
+    INNER JOIN `categorie` AS c
+    ON
+        p.catergorie_id = c.id
+    INNER JOIN `status` AS s
+    ON
+        l.beschikbaarheid = s.id;
     sql;
 
     $sql_lijst_result = $conn->query($sql_lijst_student);
