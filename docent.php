@@ -16,6 +16,7 @@ $rows = $result_doc_users->fetchAll(PDO::FETCH_ASSOC);
 
 $sql_doc_list_uitgeleend = <<<sql
     SELECT
+    l.id,
     p.Product_naam AS naam,
     c.Categorie_naam AS categorie,
     l.inlever_datum,
@@ -41,6 +42,7 @@ $rows_doc_li = $result_doc_list->fetchAll(PDO::FETCH_ASSOC);
 
 $sql_doc_list_beschikbaar = <<<sql
     SELECT
+    l.id,
     p.Product_naam AS naam,
     c.Categorie_naam AS categorie,
     l.inlever_datum,
@@ -112,6 +114,7 @@ function showList_doc_uitgeleend()
         echo PHP_EOL;
         foreach ($rows_doc_li as $item)
         {
+            echo "  Id: " . $item['id'] . PHP_EOL; 
             echo "  Naam: " . $item['naam'] . PHP_EOL;
             echo "  Categorie: " . $item['categorie'] . PHP_EOL;
             echo "  Inlever Datum: " . $item['inlever_datum'] . PHP_EOL;
@@ -128,6 +131,7 @@ function showList_doc_beschikbaar()
         echo PHP_EOL;
         foreach ($rows_doc_li2 as $item)
         {
+            echo "  id: " . $item['id'] . PHP_EOL;
             echo "  Naam: " . $item['naam'] . PHP_EOL;
             echo "  Categorie: " . $item['categorie'] . PHP_EOL;
             echo PHP_EOL;
@@ -136,13 +140,47 @@ function showList_doc_beschikbaar()
 
 function uitleen() 
 {
+    global $conn;
+    
     showList_doc_beschikbaar();
-    $input_sql = "";
+    echo "vul a.u.b. een datum in: " .  PHP_EOL;
+    $input_item = readline("Product>> ") . PHP_EOL;
+    $input_datum = readline("<<YYYY-MM-DD>> ") . PHP_EOL;
+    $input_sql = "UPDATE `leenlijst` SET `inlever_datum` = '$input_datum', `beschikbaarheid` = 2 WHERE `beschikbaarheid` = 1 AND `product_id` = '$input_item'";
+    $input_result = $conn->query($input_sql);
+    
+    if ($input_result)
+    {
+        echo "uitgeleend!";
+    }
+    else 
+    {
+        echo "Error: niet uit kunnen lenen";
+    }
+    global $options_docent;
+    askInput($options_docent);
 }
 
 function inleveren() 
 {
+    global $conn;
     showList_doc_uitgeleend();
+    
+    echo "vul a.u.b. een datum in: " .  PHP_EOL;
+    $input_item = readline("Product>> ") . PHP_EOL;
+    $input_sql = "UPDATE `leenlijst` SET `inlever_datum` = NULL, `beschikbaarheid` = 1 WHERE `beschikbaarheid` = 2 AND `product_id` = '$input_item'";
+    $input_result = $conn->query($input_sql);
+    
+    if ($input_result)
+    {
+        echo "ingeleverd!";
+    }
+    else 
+    {
+        echo "Error: niet kunnen inleveren";
+    }
+    global $options_docent;
+    askInput($options_docent);
 }
 
 function voegtoe_categorie()
