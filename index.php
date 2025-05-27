@@ -7,7 +7,7 @@
     $options = [];
 
     $options[] = new Option("Exit", 'stop');
-    $options[] = new Option("Inloggen als docent", 'showList_doc');
+    $options[] = new Option("Inloggen als docent", 'login_user');
     $options[] = new Option("Lijst", 'showList');
 
     $sql_lijst_student = <<<sql
@@ -47,6 +47,7 @@
         foreach ($rows as $item)
         {
             echo "  Naam: " . $item['naam'] . PHP_EOL;
+            echo "  Categorie: " . $item['categorie'] . PHP_EOL;
             echo "  Beschikbaarheid: " . $item['beschikbaarheid'] . PHP_EOL;
             echo "  Inlever Datum: " . $item ['inlever_datum'] . PHP_EOL;
             echo PHP_EOL;
