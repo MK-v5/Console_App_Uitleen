@@ -63,6 +63,10 @@ sql;
 $result_doc_list2 = $conn->query($sql_doc_list_beschikbaar);
 $rows_doc_li2 = $result_doc_list2->fetchAll(PDO::FETCH_ASSOC);
 
+$sql_doc_list_studenten = "SELECT * FROM `student`";
+$result_doc_list3 = $conn->query($sql_doc_list_studenten);
+$rows_doc_li3 = $result_doc_list3->fetchAll(PDO::FETCH_ASSOC);
+
 
 function login_user()
 {
@@ -138,46 +142,73 @@ function showList_doc_beschikbaar()
         }
 }
 
+function showList_doc_stud()
+{
+    global $rows_doc_li3;
+    echo PHP_EOL;
+    echo "Producten:" . PHP_EOL;
+    echo PHP_EOL;
+    foreach ($rows_doc_li3 as $item)
+    {
+        echo "  id: " . $item['id'] . PHP_EOL;
+        echo "  Naam: " . $item['student_naam'] . PHP_EOL;
+        echo PHP_EOL;
+    }
+}
+
 function uitleen() 
 {
     global $conn;
     
     showList_doc_beschikbaar();
-    echo "vul a.u.b. een datum in: " .  PHP_EOL;
-    $input_item = readline("Product>> ") . PHP_EOL;
-    $input_datum = readline("<<YYYY-MM-DD>> ") . PHP_EOL;
-    $input_sql = "UPDATE `leenlijst` SET `inlever_datum` = '$input_datum', `beschikbaarheid` = 2 WHERE `beschikbaarheid` = 1 AND `product_id` = '$input_item'";
+    showList_doc_stud();
+    echo "vul a.u.b. een product id in: " . PHP_EOL;
+    $input_item = readline("Product ID>> ") . PHP_EOL;
+    echo "vul a.u.b. een datum in: " . PHP_EOL;
+    $input_datum = readline("YYYY-MM-DD>> ") . PHP_EOL;
+    echo "vul a.u.b. een student id in: " . PHP_EOL;
+    $input_stud = readline("Student ID>> ") . PHP_EOL;
+
+    $input_sql = "UPDATE `leenlijst` SET `student_id` = '$input_stud', `inlever_datum` = '$input_datum', `beschikbaarheid` = 2 WHERE `beschikbaarheid` = 1 AND `id` = '$input_item'";
     $input_result = $conn->query($input_sql);
     
     if ($input_result)
     {
+        echo PHP_EOL;
         echo "uitgeleend!";
+        echo PHP_EOL;
     }
     else 
     {
+        echo PHP_EOL;
         echo "Error: niet uit kunnen lenen";
+        echo PHP_EOL;
     }
     global $options_docent;
     askInput($options_docent);
 }
 
-function inleveren() 
+function inleveren()
 {
     global $conn;
     showList_doc_uitgeleend();
     
-    echo "vul a.u.b. een datum in: " .  PHP_EOL;
-    $input_item = readline("Product>> ") . PHP_EOL;
-    $input_sql = "UPDATE `leenlijst` SET `inlever_datum` = NULL, `beschikbaarheid` = 1 WHERE `beschikbaarheid` = 2 AND `product_id` = '$input_item'";
-    $input_result = $conn->query($input_sql);
+    echo "vul a.u.b. een product in: " .  PHP_EOL;
+    $input_item2 = readline("Product>> ") . PHP_EOL;
+    $input_sql2 = "UPDATE `leenlijst` SET `student_id` = NULL, `inlever_datum` = NULL, `beschikbaarheid` = 1 WHERE `beschikbaarheid` = 2 AND `id` = '$input_item2'";
+    $input_result2 = $conn->query($input_sql2);
     
-    if ($input_result)
+    if ($input_result2)
     {
+        echo PHP_EOL;
         echo "ingeleverd!";
+        echo PHP_EOL;
     }
     else 
     {
+        echo PHP_EOL;
         echo "Error: niet kunnen inleveren";
+        echo PHP_EOL;
     }
     global $options_docent;
     askInput($options_docent);
