@@ -6,6 +6,7 @@ $options_docent[] = new Option("Uitlenen", 'uitleen');
 $options_docent[] = new Option("Inleveren", 'inleveren');
 $options_docent[] = new Option("Voeg Categorie toe", 'voegtoe_categorie');
 $options_docent[] = new Option("Lijst", 'showList');
+$options_docent[] = new Option("Sluiten", 'stop');
 
 
 $access_granted = false;

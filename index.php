@@ -6,7 +6,7 @@
 
     $options = [];
 
-    $options[] = new Option("Exit", 'stop');
+    $options[] = new Option("Sluiten", 'stop');
     $options[] = new Option("Inloggen als docent", 'login_user');
     $options[] = new Option("Lijst", 'showList');
 
