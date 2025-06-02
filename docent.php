@@ -5,15 +5,15 @@ require_once __DIR__ . "/index.php";
 $options_docent[] = new Option("Uitlenen", 'uitleen');
 $options_docent[] = new Option("Inleveren", 'inleveren');
 $options_docent[] = new Option("Voeg Categorie toe", 'voegtoe_categorie');
+$options_docent[] = new Option("Voeg Docent toe", 'voegtoe_docent');
+$options_docent[] = new Option("Verwijder Docent", 'verwijder_docent');
 $options_docent[] = new Option("Lijst", 'showList');
 $options_docent[] = new Option("Sluiten", 'stop');
 
 
 $access_granted = false;
 
-$sql_doc_users = "SELECT * FROM `user`";
-$result_doc_users = $conn->query($sql_doc_users);
-$rows = $result_doc_users->fetchAll(PDO::FETCH_ASSOC);
+
 
 $sql_doc_list_uitgeleend = <<<sql
     SELECT
@@ -68,22 +68,29 @@ $sql_doc_list_studenten = "SELECT * FROM `student`";
 $result_doc_list3 = $conn->query($sql_doc_list_studenten);
 $rows_doc_li3 = $result_doc_list3->fetchAll(PDO::FETCH_ASSOC);
 
+function fetch_user($user_name)
+{
+    global $conn;
+
+    $sql_doc_users = "SELECT * FROM `user` WHERE user_name = :uname";
+    $result_doc_users = $conn->prepare($sql_doc_users);
+    $result_doc_users->bindParam("uname", $user_name);
+    $result_doc_users->execute();
+    return $result_doc_users->fetch(PDO::FETCH_ASSOC);
+}
 
 function login_user()
 {
-    global $rows;
     $login_passed = false;
     echo "vult uw gebuikers naam in:" . PHP_EOL;
-    $input = readline(">> ");
+    $input = trim(readline(">> "));
     echo PHP_EOL;
+    $user = fetch_user($input);
 
-    foreach ($rows as $row) 
+    if ($input == $user['user_name']) 
     {
-        if ($input == $row['user_name']) 
-        {
-            login_pass($row);
-            $login_passed = true;
-        }
+        login_pass($user);
+        $login_passed = true;
     }
     if (!$login_passed) 
     {
@@ -98,7 +105,7 @@ function login_pass($user)
     global $options_docent;
 
     echo "vul Uw wachtwoord in:" . PHP_EOL;
-    $input = readline(">> ");
+    $input = trim(readline(">> "));
     echo PHP_EOL;
 
     if ($input == $user['password']) 
@@ -240,3 +247,63 @@ function voegtoe_categorie()
 
     askInput($options_docent);
 }
+
+function voegtoe_docent()
+{
+    global $conn;
+    
+    echo "voer naam in" . PHP_EOL;
+    $un_input = trim(readline("} ")) . PHP_EOL;
+    echo "voer wachtwoord in" . PHP_EOL;
+    $pass_input = trim(readline("} ")) . PHP_EOL;
+    $user_sql = "INSERT INTO `user` (`user_name`, `password`) VALUES ('$un_input', '$pass_input');";
+    $insert = $conn->query($user_sql);
+    
+    if ($insert)
+    {
+        echo PHP_EOL;
+        echo "Categorie ingevoerd";
+        echo PHP_EOL;
+    }
+    else
+    {
+        echo PHP_EOL;
+        echo "Error: Data is niet ingevoerd";
+        echo PHP_EOL;
+    }
+    
+    global $options_docent;
+    askInput($options_docent);
+}
+
+//je kan docenten nog niet verwijderen
+
+// function verwijder_docent()
+// {
+//     global $conn;
+//     global $options_docent;
+//     echo "vul gebuikers naam in:" . PHP_EOL;
+//     $input_Del1 = trim(readline(">> ")) . PHP_EOL;
+//     echo "vul wachtwoord in:" . PHP_EOL;
+//     $input_Del2 = trim(readline(">> ")) . PHP_EOL;
+//     $sql_del_users = "DELETE FROM `user` WHERE `user_name` = '$input_Del1' AND `password` = '$input_Del2'";
+//     //$delete = $conn->query($sql_del_users);
+//     $conn->exec($sql_del_users);
+//     echo "succesfully deleted user.";
+
+//     // var_dump($delete);
+//     // exit;
+
+//     // if ($delete) 
+//     // {
+//     //     echo PHP_EOL;
+//     //     echo PHP_EOL;
+//     // }
+//     // else
+//     // {
+//     //     echo PHP_EOL;
+//     //     echo "input invalid";
+//     //     echo PHP_EOL;
+//     // }
+//     askInput($options_docent);
+// }
